@@ -48,6 +48,10 @@ class NWInfo:
         core.registerSSEHandler('delhost', self.delhostHandler)
         core.registerSSEHandler('port', self.portHandler)
         core.registerSSEHandler('flow', self.flowHandler)
+        
+        # Send link and port info for busylink detection
+        core.registerEvent('linkbag', self.sendLink, 5)
+        core.registerEvent('portbag', self.sendPort, 5)
 
         # websocket API for WebUI
         core.registerURLApi('port', self.getPortCounter)
@@ -59,6 +63,12 @@ class NWInfo:
         core.registerIPC('getAllFlows', self.getAllFlows)
 
         logger.info('Handlers and RESTful APIs registered')
+
+    def sendLink(self):
+        return self.links
+
+    def sendPort(self):
+        return self.portstats
 
     def __trigger(self, controller_ip, controller_port, adapter_port,
             controller_name):
