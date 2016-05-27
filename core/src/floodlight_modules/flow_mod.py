@@ -14,7 +14,7 @@ class Flow_mod:
 		# register rest api
 		core.registerRestApi("flowmod", self.flowHandler)
 
-	def flowHandler(self,data):
+	def flowHandler(self, body):
 		# return JSONP format
 		body = json.dumps(data.get_json(force=True))
 		conn = httplib.HTTPConnection(self.IP, self.Port)
