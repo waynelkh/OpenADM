@@ -12,7 +12,7 @@ class Flow_mod:
 			"Accept": "application/json",
             	}
 		# register rest api
-		core.registerRestApi("flowmod", self.flowHandler)
+		core.registerURLApi("flowmod", self.flowHandler)
 
 	def flowHandler(self, body):
 		# return JSONP format
