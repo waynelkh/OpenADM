@@ -44,10 +44,10 @@ class BusyLink_Detect:
             self.links = {}
             for link in data:
                 tmp = {}
-                tmp['source'] = link[0]['dpid']
-                tmp['target'] = link[1]['dpid']
-                tmp['sourcePort'] = int(link[0]['port'])
-                tmp['targetPort'] = int(link[1]['port'])
+                tmp['source'] = link['link'][0]['dpid']
+                tmp['target'] = link['link'][1]['dpid']
+                tmp['sourcePort'] = int(link['link'][0]['port'])
+                tmp['targetPort'] = int(link['link'][1]['port'])
                 id = "dpid %s, port %d -- dpid %s, port %d" % (tmp['source'], tmp['sourcePort'], tmp['target'], tmp['targetPort'])
                 self.links[id] = tmp
         except Exception, e:
