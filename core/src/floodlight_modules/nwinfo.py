@@ -61,8 +61,9 @@ class NWInfo:
 
         # IPC API for other modules
         core.registerIPC('getAllFlows', self.getAllFlows)
+        core.registerIPC('getAllLinks', self.sendLink)
 
-        logger.info('Handlers and RESTful APIs registered')
+        logger.info('Handlers and websocket APIs registered')
 
     def sendLink(self):
         return self.links
@@ -407,10 +408,17 @@ class NWInfo:
         """Return port statistics of a specific switch port
 
         Usage:
-            /port?dpid=<sw_dpid>&port=<sw_port>
-            /port?dpid=<sw_dpid>
-            /port?port=<sw_port>
-            /port
+            /websocket, emit('OTHER', { data:
+                                  { url: 'port',
+                                    request:
+                                           { dpid: sw_dpid, (may empty)
+                                             port: sw_port (may empty)
+                                             controller: ctrl_name (may empty)
+                                            }
+                                  }
+                             })
+        Return:
+            /websocket, socket.on('PORT_RESP', {data: return json})
         """
         controller = req.get('controller', None)
         dpid = req.get('dpid', None)
@@ -448,8 +456,15 @@ class NWInfo:
         """Return all flow entries of switches
 
         Usage:
-            /flow?dpid=<sw_dpid>
-            /flow
+            /websocket, socket.on('OTHER',
+                                  { url: 'flow',
+                                    request:
+                                           { dpid: sw_dpid, (may empty)
+                                             controller: ctrl_name (may empty)
+                                            }
+                                  })
+        Return:
+            /websocket, socket.on('FLOW_RESP', {data: return json})
         """
         controller = req.get('controller', None)
         dpid = req.get('dpid', None)
@@ -477,8 +492,15 @@ class NWInfo:
         """Return top flow entries of switches (default 10)
 
         Usage:
-            /flow/top?dpid=<sw_dpid>
-            /flow/top
+            /websocket, socket.on('other',
+                                  { url: 'flow/top',
+                                    request:
+                                           { dpid: sw_dpid, (may empty)
+                                             controller: ctrl_name (may empty)
+                                            }
+                                  })
+        Return:
+            /websocket, socket.on('FLOW/TOP_RESP', {data: return json})
         """
         controller = req.get('controller', None)
         dpid = req.get('dpid', None)
@@ -506,7 +528,12 @@ class NWInfo:
         """Manually reset the datastore inside the NWInfo module
 
         Usage:
-            /reset_datastore
+            /websocket, socket.on('other',
+                                  { url: 'reset_datastore',
+                                    request: {}
+                                  })
+        Return:
+            /websocket, socket.on('reset_datastore', {data: return json})
         """
         self.controllers = {}
         self.packetins = []
