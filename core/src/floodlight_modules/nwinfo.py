@@ -277,6 +277,7 @@ class NWInfo:
         self.devices[key] = raw
         # Type of the device
         self.devices[key]['nodeType'] = 'switch'
+        self.devices[key]['uuid'] = "{}-{}".format(raw['controller'], raw['dpid'])
         logger.debug('SUCCESS: add device -> %s' % str(raw))
         logger.debug('Total devices after addition: %d' % len(self.devices))
 
@@ -305,6 +306,7 @@ class NWInfo:
         logger.debug('Total devices after deletion: %d' % len(self.devices))
 
         # Craft returned data, tell browser what to delete
+        raw['uuid'] = "{}-{}".format(raw['controller'], raw['dpid'])
         result = json.dumps(raw)
         return result
 
@@ -328,6 +330,7 @@ class NWInfo:
         self.hosts[key] = raw
         # Type of the host
         self.hosts[key]['nodeType'] = 'host'
+        self.hosts[key]['uuid'] = "{}-{}".format(raw['controller'], raw['mac'])
         logger.debug('SUCCESS: add host -> %s' % str(raw))
         logger.debug('Total hosts after addition: %d' % len(self.hosts))
 
@@ -356,6 +359,7 @@ class NWInfo:
         logger.debug('Total hosts after deletion: %d' % len(self.hosts))
 
         # Craft returned data, tell browser what to delete
+        raw['uuid'] = "{}-{}".format(raw['controller'], raw['mac'])
         result = json.dumps(raw)
         return result
 
