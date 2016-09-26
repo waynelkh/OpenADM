@@ -182,7 +182,3 @@ class BusyLink_Detect:
                 data['link'].append({'dpid': self.links[self.BLD_result[i]]['source'], 'port': self.links[self.BLD_result[i]]['sourcePort']})
                 data['link'].append({'dpid': self.links[self.BLD_result[i]]['target'], 'port': self.links[self.BLD_result[i]]['targetPort']})
                 print json.dumps(data)
-        else:
-            print 'No BusyLink'
-            #conn = httplib.HTTPConnection(self.coreIP,self.corePort)
-            #conn.request('POST','/publish/busylink')
