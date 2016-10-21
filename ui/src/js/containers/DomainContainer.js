@@ -6,6 +6,8 @@ import { onlyUpdateForKeys } from 'recompose';
 import Module from '../components/Module/Module.jsx';
 import ModuleButton from '../components/Module/ModuleButton.jsx';
 import ShortcutsPannel from '../components/ShortcutsPannel.jsx';
+import SliceDeviceManager from '../components/SliceDeviceManager.jsx';
+import SliceManager from '../components/SliceManager.jsx';
 import TopologyContainer from './TopologyContainer';
 
 import FlowtableContainer from './FlowtableContainer';
@@ -46,6 +48,8 @@ class DomainContainer extends Component {
       toggleModule,
       closeShortcuts,
       changezIndex,
+      closeSliceDeviceManager,
+      closeSliceManager,
       resetLayout,
     } = this.props;
     return (
@@ -68,6 +72,8 @@ class DomainContainer extends Component {
           )}
         </ReactCSSTransitionGroup>
         <ShortcutsPannel hidden={hidden} closeShortcuts={closeShortcuts} />
+        <SliceDeviceManager hidden={hidden} closeSliceDeviceManager={closeSliceDeviceManager} />
+        <SliceManager hidden={hidden} closeSliceManager={closeSliceManager} />
         <ModuleButton hidden={hidden} togglePanel={toggleModule} />
 
         <TopologyContainer />

@@ -19,7 +19,7 @@ const initialState = Immutable.from({
       { x: 50, y: 350, width: 800, height: 200, name: 'Flowtable', zIndex: 10 },
       { x: 50, y: 400, width: 800, height: 200, name: 'Detail', zIndex: 10 },
     ],
-    hidden: ['shortcuts'],
+    hidden: ['shortcuts', 'SliceDeviceManager', 'SliceManager'],
   },
   setting: {
     coreURL: '',

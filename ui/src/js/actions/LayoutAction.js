@@ -10,3 +10,12 @@ export const closeShortcuts = () => ({
   type: 'TOGGLE_MODULE',
   payload: 'shortcuts',
 });
+
+export const closeSliceDeviceManager = () => ({
+  type: 'TOGGLE_MODULE',
+  payload: 'SliceDeviceManager',
+});
+export const closeSliceManager = () => ({
+  type: 'TOGGLE_MODULE',
+  payload: 'SliceManager',
+});

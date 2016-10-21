@@ -2,6 +2,7 @@
 import { scaleOrdinal, schemeCategory10 } from 'd3';
 import Helper from '../../utils/TopoHelper';
 import { keyMap } from '../../constant/moduleMapping';
+import _ from 'lodash';
 
 const nx = global.nx;
 const color10 = scaleOrdinal(schemeCategory10);
@@ -25,7 +26,7 @@ class Topo {
       enableGradualScaling: true,
       supportMultipleLink: true,
       identityKey: 'uid',
-      // autoLayout: true,
+      autoLayout: true,
       dataProcessor: 'force',
       // layoutType: 'hierarchicalLayout',
       // nodeInstanceClass: 'ExtendedNode',
@@ -92,57 +93,11 @@ class Topo {
       // },
     });
 
-
-    nx.define('ExtendedNode', nx.graphic.Topology.Node, {
-      view(view) {
-        const newView = view;
-        newView.content[2].events.click = '{#_nodeClick}';
-          // console.log('view ', view.content[0])
-        return newView;
-      },
-
-      methods: {
-        init(args) {
-          this.inherited(args);
-          const stageScale = this.topology().stageScale();
-          this.view('label').setStyle('font-size', 14 * stageScale);
-        },
-        setModel(model) {
-          this.inherited(model);
-        },
-        applyChanges() {
-          // var type = $scope.getNodeTypeById(this.id());
-          // if ($scope.colorTable.nodeTypes.hasOwnProperty(type)) {
-          //   this.color($scope.colorTable.nodeTypes[type]);
-          // }
-        },
-        _nodeClick(sender, event) {
-          console.log('node clicked', this.id());
-        },
-        _dragstart(sender, event) {
-          console.log('drag start', this.model().get('dpid'));
-        },
-      },
-    });
-
-    nx.define('ExtendedLink', nx.graphic.Topology.Link, {
-      methods: {
-        init(args) {
-          this.inherited(args);
-          // fixme: third parameter should be false
-          // topo.fit(undefined, undefined, true);
-        },
-        setModel(model) {
-          this.inherited(model);
-        },
-        applyChanges() {},
-      },
-    });
-
     topoInstant.on('topologyGenerated', (sender, event) => {
       topoInstant.adaptToContainer();
-
-      // topoInstant.expandAll();
+      topoInstant.expandAll();
+      topoInstant.tooltipManager().showNodeTooltip(false);
+      // topoInstant.tooltipManager().showLinkTooltip(false);
     });
 
     const app = new nx.ui.Application();
@@ -156,7 +111,7 @@ class Topo {
 
   bindEvent(props) {
     topoInstant.on('clickNode', (topo, node) => {
-      props.clickNode(node.model().getData());
+      // props.clickNode(node.model().getData());
     });
     topoInstant.on('clickLink', (topo, link) => {
       props.clickLink(link.model().getData());
@@ -238,6 +193,44 @@ class Topo {
     topoInstant.removeNode(uid);
   }
 
+  updateGroup() {
+    const groupNode = _.groupBy(topoInstant.getNodes(), node => node.model().getData().controller);
+    console.info('Group node:', groupNode);
+    const groupLayer = topoInstant.getLayer('groups');
+    // groupLayer.clear();
+    Object.keys(groupNode).forEach(name => {
+      groupLayer.addGroup({
+        nodes: groupNode[name],
+        label: name,
+        shapeType: 'rect',
+        color: getColorWithController(name),
+      });
+    });
+  }
+
+  addNodeToSet(nodeData) {
+    const nodeSet = topoInstant.getLayer('nodeSet')
+      .nodeSets().filter(n => n.label() === nodeData.controller)[0];
+    const graph = topoInstant.graph();
+    if (nodeSet !== []) {
+      const vertexSet = nodeSet.model();
+      const vertex = graph._addVertex({
+        x: Math.random() * 200,
+        y: Math.random() * 200,
+        ...nodeData,
+      });
+      vertexSet.addVertex(vertex);
+      graph.updateVertexSet(vertex);
+      if (!nodeSet.collapsed()) {
+        const animation = nodeSet.animation();
+        nodeSet.animation(false);
+        nodeSet.collapsed(true);
+        nodeSet.collapsed(false);
+        nodeSet.animation(animation);
+      }
+    }
+  }
+
   addLinkById(source, target, linkType) {
     topoInstant.addLink({ source, target, linkType });
   }
@@ -251,6 +244,7 @@ class Topo {
   }
 
   addPath(linkCollection = {}) {
+    console.log('Add path: ', linkCollection);
     if (linkCollection.path && !linkCollection.path.length) {
       return;
     }

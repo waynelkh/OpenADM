@@ -41,6 +41,13 @@ export default (state = initalState, { type, payload }) => {
 
     case 'DRAG_NODE':
       return state.update('fixedNode', d => d.merge(payload));
+    case 'RELEASE_NODE':
+      return state.set('fixedNode', {});
+
+    case 'UPDATE_GROUP': {
+      Topo.updateGroup();
+      return state;
+    }
 
     case 'CLICK_NODE':
       return state;
@@ -62,12 +69,13 @@ export default (state = initalState, { type, payload }) => {
      */
     case 'ADDHOST': {
       const uid = `${payload.controller}@${payload.mac}`;
-      Topo.addNode({
+      Topo.addNodeToSet({
         ...payload,
         uid,
       });
       const suid = `${payload.controller}@${payload.location.dpid}`;
       Topo.addLinkById(suid, uid, 's2h');
+      // Topo.updateGroup();
       return state;
     }
     /**
@@ -85,7 +93,7 @@ export default (state = initalState, { type, payload }) => {
      * {controller: "waynesdn", type: "switch", dpid: "00:00:00:00:00:00:00:03"}
      */
     case 'ADDDEVICE': {
-      Topo.addNode({
+      Topo.addNodeToSet({
         ...payload,
         uid: `${payload.controller}@${payload.dpid}`,
       });

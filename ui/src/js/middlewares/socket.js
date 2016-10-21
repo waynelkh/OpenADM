@@ -42,6 +42,7 @@ const matchResponseForNotify = (actionName, payload) => {
   if (!actionName.match(notifyRule)) {
     return;
   }
+  console.log('actionName:', actionName, payload);
   if (payload.status !== 'OK') {
     toastr.warning(actionName.toLowerCase().replace(/_/g, ' '), payload.message);
   } else {
@@ -65,7 +66,6 @@ const createSocket = (store, coreURL) => {
     socket.io._reconnection = true;  // eslint-disable-line no-underscore-dangle
     toastr.success('websocket', 'Connected');
   });
-  window.socket = socket;
   socket.on('connect_error', d => {
     toastr.error('websocket', `Connect error,
       Please check the core url ! Error Message: ${d}`);

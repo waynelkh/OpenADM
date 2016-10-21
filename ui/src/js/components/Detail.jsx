@@ -18,7 +18,7 @@ const enhance = compose(
   onlyUpdateForKeys(['nodes'])
 );
 
-const ignoreAttribe = ['x', 'y', 'px', 'py', 'weight', 'index'];
+const ignoreAttribe = ['x', 'y', 'px', 'py', 'weight', 'index', 'fixed', 'uid', 'type'];
 
 const Detail = ({ nodes = [] }) => {
   const pruneNode = nodes.map(node => node.without(ignoreAttribe));
@@ -30,7 +30,7 @@ const Detail = ({ nodes = [] }) => {
       <div>
         {pruneNode.map((node, i) => <List key={`ul-${i}`}>
           {Object.keys(node).map(key =>
-            <ListItem key={`item-${key}`} primaryText={`${key}: ${node[key]}`} />
+            <ListItem key={`item-${key}`} primaryText={`${key}: ${(typeof node[key] === 'string') ? node[key] : JSON.stringify(node[key])}`} />
           )}
         </List>
         )}
