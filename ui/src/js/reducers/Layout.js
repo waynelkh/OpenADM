@@ -98,6 +98,8 @@ const layout = handleActions({
 }, initialState.layout);
 
 const hidden = handleActions({
+  SELECT_NODE: (state) => (state.indexOf('Detail') == -1) ?
+    state : state.filter(d => d != 'Detail'),
   TOGGLE_MODULE: (state, { payload }) => (state.indexOf(payload) == -1) ?
     state.concat(payload) :
     state.filter(d => d != payload),

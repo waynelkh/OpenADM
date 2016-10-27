@@ -1,11 +1,10 @@
 import React, { PropTypes } from 'react';
-import { onlyUpdateForKeys, withState, withHandlers, compose } from 'recompose';
+import { onlyUpdateForKeys, compose } from 'recompose';
 
 import IconMenu from 'material-ui/IconMenu';
 import MenuItem from 'material-ui/MenuItem';
 import IconButton from 'material-ui/IconButton';
 import Divider from 'material-ui/Divider';
-import Download from 'material-ui/svg-icons/file/file-download';
 import ArrowDropLeft from 'material-ui/svg-icons/hardware/keyboard-arrow-left';
 import FloatingActionButton from 'material-ui/FloatingActionButton';
 import ContentAdd from 'material-ui/svg-icons/content/add';

@@ -9,29 +9,10 @@ const initalState = Immutable.from({
   filter: [],
   selectNodes: [],
   tag: '',
-  controllerList: [],
 });
 
 export default (state = initalState, { type, payload }) => {
   switch (type) {
-    // case 'ADD_NODE':
-    //   Topo.addNode(payload);
-    //   return state.update("nodes", d => {
-    //     return d.concat(payload);
-    //   });
-    //
-    // case 'DEL_NODE':
-    //   return state.update("nodes", d => {
-    //     return d.slice(0, d.length - 1);
-    //   });
-    // case 'ADD_LINK':
-    //   return state.update("links", d => {
-    //     return _.uniqWith(d.concat(payload), _.isEqual);
-    //   });
-    // case 'DEL_LINK':
-    //   return state.update('links', links =>
-    //     links.filter(link => !(link === payload) )
-    //   );
     // case 'SEARCH_NODE':
     //   return state.set('searchNode', payload);
     // case 'TAG_CHANGE':
@@ -177,15 +158,17 @@ export default (state = initalState, { type, payload }) => {
         nodeSet: topoNodeSet,
       };
       Topo.setData(topoData);
-      return state.update('controllerList',
-        () => controllers.map(d => d.controller)
-      );
+      return state;
     }
     /**
      * { controller, mac_src, mac_dst , port_src, port_dst, ip_src, ip_dst
      * 	 protocol, ther_type, in_port, dpid }
      */
     case 'PACKET': {
+      return state;
+    }
+    case 'VERTICAL_NODE': {
+      Topo.verticalNode();
       return state;
     }
     case 'CLEAR_ALL_PATH': {

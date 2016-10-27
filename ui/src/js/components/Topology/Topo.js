@@ -27,7 +27,7 @@ class Topo {
       supportMultipleLink: true,
       identityKey: 'uid',
       autoLayout: true,
-      dataProcessor: 'force',
+      dataProcessor: 'nextforce',
       // layoutType: 'hierarchicalLayout',
       // nodeInstanceClass: 'ExtendedNode',
       // linkInstanceClass: 'ExtendedLink',
@@ -149,6 +149,9 @@ class Topo {
         case 'r':
           props.resetLayout();
           break;
+        case 'v':
+          this.verticalNode();
+          break;
         case '?':
           props.toggleModule(keyMap[e.key]);
           break;
@@ -197,12 +200,12 @@ class Topo {
     const groupNode = _.groupBy(topoInstant.getNodes(), node => node.model().getData().controller);
     console.info('Group node:', groupNode);
     const groupLayer = topoInstant.getLayer('groups');
-    // groupLayer.clear();
+    groupLayer.clear();
     Object.keys(groupNode).forEach(name => {
       groupLayer.addGroup({
         nodes: groupNode[name],
         label: name,
-        shapeType: 'rect',
+        shapeType: 'nodeSetPolygon',
         color: getColorWithController(name),
       });
     });
@@ -281,6 +284,34 @@ class Topo {
   getLinksByNodeUid(sourceUid, targetUid) {
     const linkClasses = topoInstant.getLinksByNode(sourceUid, targetUid);
     return Object.keys(linkClasses);
+  }
+
+  verticalNode() {
+    let moveNode = {};
+
+    topoInstant.getNodes().forEach(node => {
+      if(node.model().getData().controller !== 'physical'){
+        const dpid = node.model().getData().dpid;
+        const physicalNode = topoInstant.getNode(`physical@${dpid}`);
+        if (physicalNode) {
+          const LEVEL =  (clist.indexOf(node.model().getData().controller) + 1) * 400 ;
+          moveNode = {
+            ...moveNode,
+            [dpid]:  {
+              x: physicalNode.x() - node.x(),
+              y: physicalNode.y() - node.y() - LEVEL,
+            },
+          };
+          node.y(physicalNode.y() - LEVEL);
+          node.x(physicalNode.x());
+        }
+        else if(node.model().getData().mac){
+          const attachDpid = node.model().getData().location.dpid;
+          node.x(node.x() + moveNode[attachDpid].x);
+          node.y(node.y() + moveNode[attachDpid].y);
+        }
+      }
+    })
   }
 
   getTopo() {

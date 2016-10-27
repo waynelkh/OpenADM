@@ -36,7 +36,6 @@ const initialState = Immutable.from({
     nodes: [],
     fixedNode: {},
     links: [],
-    controllerList: [],
   },
   controllerStatus: [],
   flowtable: {
@@ -54,6 +53,8 @@ const initialState = Immutable.from({
     showAction: false,
   },
   portStatus: [],
+  sliceManager: {},
+  sliceDeviceManager: {},
 });
 
 const store = configureStore(initialState, browserHistory);

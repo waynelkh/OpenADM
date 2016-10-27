@@ -8,6 +8,8 @@ import flowtable from './Flowtable';
 import layout from './Layout';
 import setting from './Setting';
 import portStatus from './PortStatus';
+import sliceManager from './SliceManager';
+import sliceDeviceManager from './SliceDeviceManager';
 
 const routeInitialState = Immutable.from({
   locationBeforeTransitions: null,
@@ -32,4 +34,6 @@ export default combineReducers({
   flowtable,
   setting,
   portStatus,
+  sliceManager,
+  sliceDeviceManager,
 });
