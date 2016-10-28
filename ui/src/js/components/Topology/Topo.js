@@ -306,9 +306,14 @@ class Topo {
           node.x(physicalNode.x());
         }
         else if(node.model().getData().mac){
-          const attachDpid = node.model().getData().location.dpid;
-          node.x(node.x() + moveNode[attachDpid].x);
-          node.y(node.y() + moveNode[attachDpid].y);
+          const mac = node.model().getData().mac;
+          const LEVEL =  (clist.indexOf(node.model().getData().controller) + 1) * 400 ;
+          const physicalHost = topoInstant.getNode(`physical@${mac}`);
+          node.y(physicalHost.y() - LEVEL);
+          node.x(physicalHost.x());
+          // const attachDpid = node.model().getData().location.dpid;
+          // node.x(node.x() + moveNode[attachDpid].x);
+          // node.y(node.y() + moveNode[attachDpid].y);
         }
       }
     })
