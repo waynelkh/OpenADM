@@ -12,6 +12,9 @@ const localStorageConfig = {
   key: 'openadm',
   slicer: path => state => ({
     ...state,
+    toastr: {
+      toastrs: [],
+    },
     topology: {
       ...state.topology,
       selectNodes: [],

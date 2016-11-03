@@ -102,12 +102,8 @@ export const socketIoMiddleware = store => next => action => {
       action.payload.coreURL : store.getState().setting.coreURL
     ));
   }
-  if (!socket) {
-    toastr.warning('websocket', "socket doesn't inital");
-    return result;
-  }
 
-  if (SendActions.indexOf(action.type) > -1) {
+  if (socket && SendActions.indexOf(action.type) > -1) {
     if (!socket.connected && action.type !== 'SETTING_CONTROLLER') {
       toastr.warning('websocket', 'Not connected');
       return result;
