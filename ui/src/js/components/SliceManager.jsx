@@ -1,4 +1,5 @@
 import React from 'react';
+import { bindActionCreators } from 'redux';
 import { onlyUpdateForKeys ,withHandlers, withState, compose } from 'recompose';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
@@ -8,6 +9,7 @@ import Delete from 'material-ui/svg-icons/action/delete';
 import { Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn } from 'material-ui/Table';
 import { connect } from 'react-redux';
 import TextField from 'material-ui/TextField';
+import * as SliceActions from '../actions/SliceAction';
 
 const enhance = compose(
   withState('name', 'setName', props => props.name),
@@ -24,16 +26,14 @@ const enhance = compose(
         [props.uuid]: { name: props.name, bandwidth: props.bandwidth, modify: false },
       });
     },
-    onDiscard: props => event => {
-      props.updateSlice({
-        [props.uuid]: { name: props.name, bandwidth: props.bandwidth, modify: false },
-      });
+    onCancel: props => event => {
+      props.cancelSlice(props.uuid);
     }
   })
 );
 
 const EditSliceField = enhance(
-  ({ uuid, name, bandwidth, onNameChange, onBandWitdhChange, onUpdateSlice, onDiscard }) =>
+  ({ uuid, name, bandwidth, onNameChange, onBandWitdhChange, onUpdateSlice, onCancel }) =>
   <TableRow key={uuid}>
     <TableRowColumn>
       <TextField onChange={onNameChange} value={name}/>
@@ -43,13 +43,14 @@ const EditSliceField = enhance(
       <FlatButton label="儲存" primary icon={<Edit/>} onClick={onUpdateSlice} />
     </TableRowColumn>
     <TableRowColumn>
-      <FlatButton label="放棄" secondary icon={<Delete/>} onClick={onDiscard} />
+      <FlatButton label="放棄" secondary icon={<Delete/>} onClick={onCancel} />
     </TableRowColumn>
   </TableRow>
 );
 
 const SliceManager = onlyUpdateForKeys(['slices', 'hidden'])(
-  ({ slices, hidden, closeSliceManager, addSlice, delSlice, updateSlice }) =>
+  ({ slices, hidden, closeSliceManager, addSlice, cancelSlice, modifySlice, delSlice, updateSlice }) => {
+    return (
     <Dialog
       title="網路切片管理"
       modal={false}
@@ -75,20 +76,25 @@ const SliceManager = onlyUpdateForKeys(['slices', 'hidden'])(
         </TableHeader>
         <TableBody displayRowCheckbox={false}>
           {Object.keys(slices).map(k => (slices[k].modify) ?
-            (<EditSliceField uuid={k} name={slices[k].name} bandwidth={slices[k].bandwidth}
-              updateSlice={updateSlice} delSlice={delSlice} />
+            (<EditSliceField
+              uuid={k}
+              name={slices[k].name}
+              bandwidth={slices[k].bandwidth}
+              updateSlice={updateSlice}
+              modifySlice={modifySlice}
+              cancelSlice={cancelSlice}
+              delSlice={delSlice}
+            />
             ) :
             (
             <TableRow key={k}>
               <TableRowColumn>{slices[k].name}</TableRowColumn>
               <TableRowColumn>{slices[k].bandwidth}</TableRowColumn>
               <TableRowColumn><FlatButton label="編輯" primary icon={<Edit/>}
-                onClick={() => updateSlice({
-                  [k]: { ...slices[k], modify: true },
-                })}/>
+                onClick={() => modifySlice(k)} />
               </TableRowColumn>
               <TableRowColumn>
-                <FlatButton label="刪除" secondary icon={<Delete/>} onClick={() => delSlice(k) }/>
+                <FlatButton label="刪除" secondary icon={<Delete/>} onClick={() => delSlice({name: slices[k].name, uuid: k }) }/>
               </TableRowColumn>
             </TableRow>
             )
@@ -96,17 +102,13 @@ const SliceManager = onlyUpdateForKeys(['slices', 'hidden'])(
         </TableBody>
       </Table>
       <FlatButton label="新增切片" primary icon={<ContentAdd/>} onClick={() => addSlice()}/>
-    </Dialog>
+    </Dialog>)}
 );
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = state => ({
   slices: state.sliceManager,
 });
 
-const mapDispatchToProps = dispatch => ({
-  addSlice: () => dispatch({ type: 'ADD_SLICE' }),
-  delSlice: (payload) => dispatch({ type: 'DEL_SLICE', payload }),
-  updateSlice: (payload) => dispatch({ type: 'UPDATE_SLICE', payload }),
-});
+const mapDispatchToProps = dispatch => bindActionCreators(SliceActions, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(SliceManager);
