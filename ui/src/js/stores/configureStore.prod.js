@@ -22,7 +22,6 @@ const localStorageConfig = {
   }),
 };
 
-
 export default function configureStore(initialState, history) {
   const middleware = [
     thunk, promiseMiddleware, routerMiddleware(history), socketIoMiddleware,

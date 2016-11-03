@@ -48,8 +48,9 @@ class DomainContainer extends Component {
       toggleModule,
       closeShortcuts,
       changezIndex,
-      closeSliceDeviceManager,
-      closeSliceManager,
+      toggleSliceDeviceManager,
+      toggleSliceManager,
+      showSliceDeviceManager,
       resetLayout,
     } = this.props;
     return (
@@ -72,9 +73,9 @@ class DomainContainer extends Component {
           )}
         </ReactCSSTransitionGroup>
         <ShortcutsPannel hidden={hidden} closeShortcuts={closeShortcuts} />
-        <SliceDeviceManager hidden={hidden} closeSliceDeviceManager={closeSliceDeviceManager} />
-        <SliceManager hidden={hidden} closeSliceManager={closeSliceManager} />
-        <ModuleButton hidden={hidden} togglePanel={toggleModule} />
+        <SliceDeviceManager hidden={hidden} toggleSliceDeviceManager={toggleSliceDeviceManager} />
+        <SliceManager hidden={hidden} toggleSliceManager={toggleSliceManager} />
+        <ModuleButton hidden={hidden} togglePanel={toggleModule} showSliceDeviceManager={showSliceDeviceManager} />
 
         <TopologyContainer />
       </div>

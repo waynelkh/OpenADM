@@ -31,24 +31,21 @@ export const modifySlice = createAction('MODIFY_SLICE');
 
 export const updateSlice = payload => (dispatch, getState) => {
   const key = Object.keys(payload)[0];
-  if (payload[key].modify === false) {
-    const send = {
-      input: {
-        'slice-id': payload[key].name,
-        'slice-bandwidth': payload[key].bandwidth,
-      },
-    };
-    hocFetch(
-      `${getState().setting.controllerURL}/restconf/operations/datastore:add-slice-entry`,
-      'POST',
-      send
-    ).then((data) => {
-      toastr.info(`Update Slice ${payload}!`, data);
-      console.info('updateSliceSuccess', payload, data);
-      dispatch(updateSliceSuccess(payload));
-    }).catch(err => toastr.error(`Update Slice ${err}`));
-  }
-  dispatch(updateSliceSuccess(payload));
+  const send = {
+    input: {
+      'slice-id': payload[key].name,
+      'slice-bandwidth': payload[key].bandwidth,
+    },
+  };
+  hocFetch(
+    `${getState().setting.controllerURL}/restconf/operations/datastore:add-slice-entry`,
+    'POST',
+    send
+  ).then((data) => {
+    toastr.info(`Update Slice ${payload}!`, data);
+    console.info('updateSliceSuccess', payload, data);
+    dispatch(updateSliceSuccess(payload));
+  }).catch(err => toastr.error(`Update Slice ${err}`));
 };
 
 export const delSlice = payload => (dispatch, getState) =>

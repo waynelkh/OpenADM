@@ -1,43 +1,64 @@
 import { handleActions } from 'redux-actions';
 import Immutable from 'seamless-immutable';
+import uuid from 'node-uuid';
 
-const initialState = Immutable.from([]);
+const initialState = Immutable.from({});
 
+// { host-table: {
+//    "host-entries": [
+//     { host-mac: 'xxxxx',  'slice-id': 'slice1003'},
+//    ]
+//  } }
+//  fetch('http://127.0.0.1:8181/restconf/config/datastore:slice-table', {
+//  { slice-table: {
+//      slice-entries: [
+//      { slice-bandwidth: 200 },
+//      { slice-id: '100' },
+//      ]
+//   } }
+//
 export default handleActions({
-  ADD_SLICE_DEVICE: (state, { payload }) => {
-    fetch('http://127.0.0.1:8181/restconf/operations/datastore:add-host-entry', {
-      method: 'POST',
-      mode: 'cors',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'Authorization': 'Basic YWRtaW46YWRtaW4=',
+  ADD_DEVICE: (state, { payload }) => state.update(payload,
+    slice => slice.merge({
+      [uuid.v1()]: {
+        mac: 'input mac',
+        modify: true,
       },
-      body: JSON.stringify({
-        input:{
-          "slice-id": payload.sliceId,
-          "host-mac": payload.mac,
+    })
+  ),
+  DELETE_DEVICE: (state, { payload }) => state.update(payload.slice,
+    slice => slice.without(payload.uuid)
+  ),
+  MODIFY_DEVICE: (state, { payload }) => state.update(payload.slice,
+    slice => slice.update(payload.uuid,
+      device => ({ ...device, modify: true })
+    )
+  ),
+  CANCEL_DEVICE: (state, { payload }) => state.update(payload.slice,
+    slice => slice.update(payload.uuid,
+      device => ({ ...device, modify: false })
+    )
+  ),
+  UPDATE_DEVICE: (state, { payload }) => state.update(payload.slice,
+    slice => slice.update(payload.uuid,
+      () => ({ mac: payload.mac, modify: false })
+    )
+  ),
+  GET_ALL_SLICE_DEVICE: (state, { payload }) => {
+    const { slices, hosts } = payload;
+    const devices = slices.reduce((pre, cur) => ({ ...pre, [cur]: {} }), {});
+    hosts.forEach((host) => {
+      Object.assign(
+        devices[host['slice-id']],
+        {
+          [uuid.v1()]: {
+            mac: host['host-mac'],
+            sliceId: host['slice-id'],
+            modify: false,
+          },
         }
-      })
-    }).then(data => console.log('Response: ', data));
-
-    return Immutable.from(payload)
+      );
+    });
+    return Immutable.from(devices);
   },
-  DEL_SLICE_DEVICE: (state, { payload }) => Immutable.from(payload),
-  UPDATE_SLICE_DEVICE: (state, { payload }) => {
-    Immutable.from(payload)
-  },
-  GET_ALL_SLICE_DEVICE: (state) => {
-    fetch('http://127.0.0.1:8181/restconf/operations/datastore:add-slice-entry', {
-      mode: 'cors',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'Authorization': 'Basic YWRtaW46YWRtaW4=',
-      }
-    }).then(data => console.log('Response: ', data));
-
-    return Immutable.from(state)
-  },
-
 }, initialState);
