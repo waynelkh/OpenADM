@@ -287,33 +287,22 @@ class Topo {
   }
 
   verticalNode() {
-    let moveNode = {};
 
     topoInstant.getNodes().forEach(node => {
       if(node.model().getData().controller !== 'physical'){
         const dpid = node.model().getData().dpid;
         const physicalNode = topoInstant.getNode(`physical@${dpid}`);
         if (physicalNode) {
-          const LEVEL =  (clist.indexOf(node.model().getData().controller) + 1) * 400 ;
-          moveNode = {
-            ...moveNode,
-            [dpid]:  {
-              x: physicalNode.x() - node.x(),
-              y: physicalNode.y() - node.y() - LEVEL,
-            },
-          };
+          const LEVEL =  (clist.indexOf(node.model().getData().controller) + 1) * 300 ;
           node.y(physicalNode.y() - LEVEL);
           node.x(physicalNode.x());
         }
         else if(node.model().getData().mac){
           const mac = node.model().getData().mac;
-          const LEVEL =  (clist.indexOf(node.model().getData().controller) + 1) * 400 ;
+          const LEVEL =  (clist.indexOf(node.model().getData().controller) + 1) * 300 ;
           const physicalHost = topoInstant.getNode(`physical@${mac}`);
           node.y(physicalHost.y() - LEVEL);
           node.x(physicalHost.x());
-          // const attachDpid = node.model().getData().location.dpid;
-          // node.x(node.x() + moveNode[attachDpid].x);
-          // node.y(node.y() + moveNode[attachDpid].y);
         }
       }
     })
