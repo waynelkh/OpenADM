@@ -4,6 +4,7 @@ import { toastr } from 'react-redux-toastr';
 
 const updateSliceSuccess = createAction('UPDATE_SLICE');
 const deleteSliceSuccess = createAction('DELETE_SLICE');
+const getSliceSuccess = createAction('GET_SLICE');
 
 const hocFetch = (url, method, payload) => fetch(url, {
   method,
@@ -62,3 +63,25 @@ export const delSlice = payload => (dispatch, getState) =>
     console.info('deleteSliceSuccess', payload, data);
     dispatch(deleteSliceSuccess(payload));
   }).catch(err => toastr.error(`Delete Slice ${err}`));
+
+export const getSlice = () => (dispatch, getState) =>
+  fetch(`${getState().setting.controllerURL}/restconf/config/datastore:slice-table`, {
+    method: 'GET',
+    mode: 'cors',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+      'Authorization': 'Basic YWRtaW46YWRtaW4=',
+    },
+  }).then((response) => {
+    if (response.status >= 400) {
+      throw new Error(response.statusText);
+    }
+    return response;
+  })
+  .then(res => res.json())
+  .then(data => {
+    const payload = data['slice-table']['slice-entries'];
+
+    dispatch(getSliceSuccess(payload));
+  });

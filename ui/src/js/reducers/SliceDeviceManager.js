@@ -46,7 +46,7 @@ export default handleActions({
   ),
   GET_SLICE_DEVICE: (state, { payload }) => {
     const { slices, hosts } = payload;
-    let devices = slices.reduce((pre, cur) => {
+    const devices = slices.reduce((pre, cur) => {
       const inHost = hosts.filter(h => h['slice-name'] === cur);
 
       return {
@@ -61,21 +61,6 @@ export default handleActions({
         }), {}),
       }
     }, {});
-    console.log('device', devices);
-    //
-    // hosts.forEach((host) => {
-    //   const r = Object.assign(
-    //     devices['slice-name'],
-    //     {
-    //       [uuid.v1()]: {
-    //         mac: host['host-mac'],
-    //         sliceId: host['slice-name'],
-    //         modify: false,
-    //       },
-    //     }
-    //   );
-    //   console.log('resule ', r);
-    // });
     return Immutable.from(devices);
   },
 }, initialState);

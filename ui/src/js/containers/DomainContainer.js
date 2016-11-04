@@ -50,6 +50,7 @@ class DomainContainer extends Component {
       changezIndex,
       toggleSliceDeviceManager,
       toggleSliceManager,
+      showSliceManager,
       showSliceDeviceManager,
       resetLayout,
     } = this.props;
@@ -75,7 +76,7 @@ class DomainContainer extends Component {
         <ShortcutsPannel hidden={hidden} closeShortcuts={closeShortcuts} />
         <SliceDeviceManager hidden={hidden} toggleSliceDeviceManager={toggleSliceDeviceManager} />
         <SliceManager hidden={hidden} toggleSliceManager={toggleSliceManager} />
-        <ModuleButton hidden={hidden} togglePanel={toggleModule} showSliceDeviceManager={showSliceDeviceManager} />
+        <ModuleButton hidden={hidden} togglePanel={toggleModule} showSliceManager={showSliceManager} showSliceDeviceManager={showSliceDeviceManager} />
 
         <TopologyContainer />
       </div>

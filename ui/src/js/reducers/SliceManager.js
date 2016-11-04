@@ -5,6 +5,16 @@ import uuid from 'node-uuid';
 const initialState = Immutable.from({});
 
 export default handleActions({
+  GET_SLICE: (state, { payload }) => {
+    const slices = payload.map(slice => ({
+      name: slice['slice-name'],
+      bandwidth: slice['slice-bandwidth'],
+      modify: false,
+    })).reduce((pre, cur) => ({
+      [uuid.v1()]: { ...cur },
+    }), {});
+    return Immutable.from(slices);
+  },
   ADD_SLICE: state => state.merge({ [uuid.v1()]: { name: 'name', bandwidth: 'M', modify: true } }),
   MODIFY_SLICE: (state, { payload }) => state.update(payload,
     slice => ({ ...slice, modify: true })

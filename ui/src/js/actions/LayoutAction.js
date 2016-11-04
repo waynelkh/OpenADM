@@ -1,5 +1,6 @@
 import { createAction } from 'redux-actions';
 import { getAllSliceEntry } from './SliceEntryAction';
+import { getSlice } from './SliceAction';
 
 export const changePosition = createAction('CHANGE_POSITION');
 export const changeSize = createAction('CHANGE_SIZE');
@@ -12,11 +13,6 @@ export const closeShortcuts = () => ({
   payload: 'shortcuts',
 });
 
-export const showSliceDeviceManager = () => (dispatch) => {
-  dispatch(getAllSliceEntry());
-  dispatch(toggleSliceDeviceManager());
-};
-
 export const toggleSliceDeviceManager = () => ({
   type: 'TOGGLE_MODULE',
   payload: 'SliceDeviceManager',
@@ -25,3 +21,13 @@ export const toggleSliceManager = () => ({
   type: 'TOGGLE_MODULE',
   payload: 'SliceManager',
 });
+
+export const showSliceDeviceManager = () => (dispatch) => {
+  dispatch(getAllSliceEntry());
+  dispatch(toggleSliceDeviceManager());
+};
+
+export const showSliceManager = () => (dispatch) => {
+  dispatch(getSlice());
+  dispatch(toggleSliceManager());
+};

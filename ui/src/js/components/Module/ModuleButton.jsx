@@ -23,7 +23,7 @@ const moduleList = [
   'SettingController',
 ];
 const ModuleButton = onlyUpdateForKeys(['hidden'])(
-  ({ hidden, togglePanel, showSliceDeviceManager }) => {
+  ({ hidden, togglePanel, showSliceManager, showSliceDeviceManager }) => {
     const childButtons = moduleList.map((data, index) => (
       <MenuItem
         key={`child-${index}`}
@@ -50,7 +50,7 @@ const ModuleButton = onlyUpdateForKeys(['hidden'])(
           anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
           targetOrigin={{ horizontal: 'right', vertical: 'bottom' }}
         >
-          <MenuItem primaryText="網路切片管理" onClick={() => togglePanel('SliceManager')} />
+          <MenuItem primaryText="網路切片管理" onClick={() => showSliceManager()} />
           <MenuItem primaryText="切片裝置管理" onClick={() => showSliceDeviceManager() } />
           <Divider />
           <MenuItem
