@@ -71,7 +71,7 @@ class Master extends React.Component {
     return (
       <AppCanvas>
         <AppBar
-          title="ITRI Mobile Backhaul"
+          title="ITRI Mobile Backhaul Manager"
           iconElementRight={
             <IconMenu
               iconButtonElement={<IconButton><MoreVertIcon /></IconButton>}

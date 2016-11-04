@@ -301,8 +301,10 @@ class Topo {
           const mac = node.model().getData().mac;
           const LEVEL =  (clist.indexOf(node.model().getData().controller) + 1) * 300 ;
           const physicalHost = topoInstant.getNode(`physical@${mac}`);
-          node.y(physicalHost.y() - LEVEL);
-          node.x(physicalHost.x());
+          if(physicalHost) {
+            node.y(physicalHost.y() - LEVEL);
+            node.x(physicalHost.x());
+          }
         }
       }
     })
