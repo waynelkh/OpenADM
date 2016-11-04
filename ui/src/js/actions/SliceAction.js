@@ -33,7 +33,7 @@ export const updateSlice = payload => (dispatch, getState) => {
   const key = Object.keys(payload)[0];
   const send = {
     input: {
-      'slice-id': payload[key].name,
+      'slice-name': payload[key].name,
       'slice-bandwidth': payload[key].bandwidth,
     },
   };
@@ -54,7 +54,7 @@ export const delSlice = payload => (dispatch, getState) =>
     'POST',
     {
       input: {
-        'slice-id': payload.name,
+        'slice-name': payload.name,
       },
     }
   ).then(data => {

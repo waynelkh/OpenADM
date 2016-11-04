@@ -44,21 +44,38 @@ export default handleActions({
       () => ({ mac: payload.mac, modify: false })
     )
   ),
-  GET_ALL_SLICE_DEVICE: (state, { payload }) => {
+  GET_SLICE_DEVICE: (state, { payload }) => {
     const { slices, hosts } = payload;
-    const devices = slices.reduce((pre, cur) => ({ ...pre, [cur]: {} }), {});
-    hosts.forEach((host) => {
-      Object.assign(
-        devices[host['slice-id']],
-        {
+    let devices = slices.reduce((pre, cur) => {
+      const inHost = hosts.filter(h => h['slice-name'] === cur);
+
+      return {
+        ...pre,
+        [cur]: inHost.reduce((preHost, curHost) => ({
+          ...preHost,
           [uuid.v1()]: {
-            mac: host['host-mac'],
-            sliceId: host['slice-id'],
+            mac: curHost['host-mac'],
+            sliceId: curHost['slice-name'],
             modify: false,
-          },
-        }
-      );
-    });
+          }
+        }), {}),
+      }
+    }, {});
+    console.log('device', devices);
+    //
+    // hosts.forEach((host) => {
+    //   const r = Object.assign(
+    //     devices['slice-name'],
+    //     {
+    //       [uuid.v1()]: {
+    //         mac: host['host-mac'],
+    //         sliceId: host['slice-name'],
+    //         modify: false,
+    //       },
+    //     }
+    //   );
+    //   console.log('resule ', r);
+    // });
     return Immutable.from(devices);
   },
 }, initialState);

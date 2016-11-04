@@ -2,7 +2,7 @@ import { createAction } from 'redux-actions';
 import fetch from 'isomorphic-fetch';
 import { toastr } from 'react-redux-toastr';
 
-const getAllSliceEntrySuccess = createAction('GET_ALL_SLICE_DEVICE');
+const getSliceEntrySuccess = createAction('GET_SLICE_DEVICE');
 
 const updateDeviceSuccess = createAction('UPDATE_DEVICE');
 const deleteDeviceSuccess = createAction('DELETE_DEVICE');
@@ -15,7 +15,7 @@ const hocFetch = (url, method, payload) => fetch(url, {
     'Content-Type': 'application/json',
     'Authorization': 'Basic YWRtaW46YWRtaW4=',
   },
-  body: () => (method !== 'GET') ? JSON.stringify(payload) : null,
+  body: JSON.stringify(payload),
 }).then((response) => {
   if (response.status >= 400) {
     throw new Error(response.statusText);
@@ -32,9 +32,10 @@ export const cancelDevice = createAction('CANCEL_DEVICE');
 export const modifyDevice = createAction('MODIFY_DEVICE');
 
 export const updateDevice = payload => (dispatch, getState) => {
+  console.log('updateDevice', payload);
   const send = {
     input: {
-      'slice-id': payload.slice,
+      'slice-name': payload.slice,
       'host-mac': payload.mac,
     },
   };
@@ -57,7 +58,6 @@ export const delDevice = payload => (dispatch, getState) =>
     'POST',
     {
       input: {
-        'slice-id': payload.slice,
         'host-mac': payload.mac,
       },
     }
@@ -69,69 +69,39 @@ export const delDevice = payload => (dispatch, getState) =>
     dispatch(deleteDeviceSuccess(payload));
   });
 
-
-const mockdata = [
-  {
-    'slice-table': {
-      'slice-entries': [
-        { 'slice-bandwidth': 200, 'slice-id': 'slice1001' },
-        { 'slice-bandwidth': 400, 'slice-id': 'slice1002' },
-        { 'slice-bandwidth': 500, 'slice-id': 'slice1003' },
-      ],
-    },
-  },
-  {
-    'host-table': {
-      'host-entries': [
-        { 'host-mac': 'xxxxx', 'slice-id': 'slice1003' },
-        { 'host-mac': 'xxxxa', 'slice-id': 'slice1001' },
-        { 'host-mac': 'axxxd', 'slice-id': 'slice1001' },
-        { 'host-mac': 'xxxxc', 'slice-id': 'slice1002' },
-      ],
-    },
-  },
-];
-
 export const getAllSliceEntry = payload => (dispatch, getState) => {
-  // const slices = mockdata[0]['slice-table']['slice-entries'].map(s => s['slice-id']);
-  // const hosts = mockdata[1]['host-table']['host-entries'];
-  // dispatch(getAllSliceEntrySuccess({ slices, hosts }));
   Promise.all([
-    hocFetch(
-      `${getState().setting.controllerURL}/restconf/config/datastore:slice-table`,
-      'GET',
-      {}
-    ),
-    hocFetch(
-      `${getState().setting.controllerURL}/restconf/config/datastore:host-table`,
-      'GET',
-      {}
-    ),
+    fetch(`${getState().setting.controllerURL}/restconf/config/datastore:slice-table`, {
+      method: 'GET',
+      mode: 'cors',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': 'Basic YWRtaW46YWRtaW4=',
+      },
+    }).then((response) => {
+      if (response.status >= 400) {
+        throw new Error(response.statusText);
+      }
+      return response;
+    }).then(res => res.json()),
+    fetch(`${getState().setting.controllerURL}/restconf/config/datastore:host-table`, {
+      method: 'GET',
+      mode: 'cors',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'Authorization': 'Basic YWRtaW46YWRtaW4=',
+      },
+    }).then((response) => {
+      if (response.status >= 400) {
+        throw new Error(response.statusText);
+      }
+      return response;
+    }).then(res => res.json()),
   ]).then((result) => {
-    try {
-      const slices = result[0]['slice-table']['slice-entries'].map(s => s['slice-id']);
-      const hosts = result[1]['host-table']['host-entries'];
-      dispatch(getAllSliceEntrySuccess({ slices, hosts }));
-    } catch (e) {
-
-    } finally {
-
-    }
+    const slices = result[0]['slice-table']['slice-entries'].map(s => s['slice-name']);
+    const hosts = result[1]['host-table']['host-entries'];
+    dispatch(getSliceEntrySuccess({ slices, hosts }));
   });
-
-  /**
-   // { host-table: {
-   //    "host-entries": [
-   //     { host-mac: 'xxxxx',  'slice-id': 'slice1003'},
-   //    ]
-   //  } }
-   //  fetch('http://127.0.0.1:8181/restconf/config/datastore:slice-table', {
-   //  { slice-table: {
-   //      slice-entries: [
-   //      { slice-bandwidth: 200 },
-   //      { slice-id: '100' },
-   //      ]
-   //   } }
-   //
-   */
 };
