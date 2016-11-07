@@ -11,6 +11,7 @@ export default handleActions({
       bandwidth: slice['slice-bandwidth'],
       modify: false,
     })).reduce((pre, cur) => ({
+      ...pre,
       [uuid.v1()]: { ...cur },
     }), {});
     return Immutable.from(slices);

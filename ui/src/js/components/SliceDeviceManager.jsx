@@ -78,7 +78,7 @@ const SliceDeviceManager =
     >
       <Tabs>
         {Object.keys(devices).map(slice => (
-          <Tab label={slice} >
+          <Tab label={slice} key={slice.toString()} >
             <Table selectable={false}>
               <TableHeader displaySelectAll={false} adjustForCheckbox>
                 <TableRow>

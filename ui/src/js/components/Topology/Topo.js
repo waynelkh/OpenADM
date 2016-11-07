@@ -162,7 +162,7 @@ class Topo {
   }
 
   setData(data) {
-    clist = data.nodeSet.map(d => d.controller);
+    clist = _.uniq(['physical'].concat(data.nodeSet.map(d => d.controller)));
     topoInstant.data(data);
     topoInstant.expandAll();
   }
@@ -287,19 +287,18 @@ class Topo {
   }
 
   verticalNode() {
-
     topoInstant.getNodes().forEach(node => {
       if(node.model().getData().controller !== 'physical'){
         const dpid = node.model().getData().dpid;
         const physicalNode = topoInstant.getNode(`physical@${dpid}`);
         if (physicalNode) {
-          const LEVEL =  (clist.indexOf(node.model().getData().controller) + 1) * 300 ;
+          const LEVEL = (clist.indexOf(node.model().getData().controller)) * 300 * topoInstant.stageScale();
           node.y(physicalNode.y() - LEVEL);
           node.x(physicalNode.x());
         }
         else if(node.model().getData().mac){
           const mac = node.model().getData().mac;
-          const LEVEL =  (clist.indexOf(node.model().getData().controller) + 1) * 300 ;
+          const LEVEL = (clist.indexOf(node.model().getData().controller)) * 300 * topoInstant.stageScale();
           const physicalHost = topoInstant.getNode(`physical@${mac}`);
           if(physicalHost) {
             node.y(physicalHost.y() - LEVEL);

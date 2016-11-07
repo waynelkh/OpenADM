@@ -158,6 +158,9 @@ export default (state = initalState, { type, payload }) => {
         nodeSet: topoNodeSet,
       };
       Topo.setData(topoData);
+      setTimeout(() => {
+        Topo.verticalNode();
+      }, 500);
       return state;
     }
     /**
