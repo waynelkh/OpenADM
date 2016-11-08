@@ -36,10 +36,10 @@ const EditSliceField = enhance(
   ({ uuid, name, bandwidth, onNameChange, onBandWitdhChange, onUpdateSlice, onCancel }) =>
     <TableRow key={uuid}>
       <TableRowColumn>
-        <TextField onChange={onNameChange} value={name} id={`${name}-mac`} />
+        <TextField onChange={onNameChange} hintText="Name" value={name} id={`${name}-mac`} />
       </TableRowColumn>
       <TableRowColumn>
-        <TextField onChange={onBandWitdhChange} value={bandwidth} id={`${bandwidth}-bw`} />
+        <TextField onChange={onBandWitdhChange} hintText="Bandwidth" value={bandwidth} id={`${bandwidth}-bw`} />
       </TableRowColumn>
       <TableRowColumn>
         <FlatButton label="儲存" primary icon={<Edit />} onClick={onUpdateSlice} />
@@ -71,7 +71,7 @@ const SliceManager = onlyUpdateForKeys(['slices', 'hidden'])(
         <TableHeader displaySelectAll={false} adjustForCheckbox={false}>
           <TableRow>
             <TableHeaderColumn columnNumber={1}>網路切片名稱</TableHeaderColumn>
-            <TableHeaderColumn columnNumber={2}>頻寬需求</TableHeaderColumn>
+            <TableHeaderColumn columnNumber={2}>頻寬需求 (kbps)</TableHeaderColumn>
             <TableHeaderColumn columnNumber={3}>+</TableHeaderColumn>
             <TableHeaderColumn columnNumber={4}>-</TableHeaderColumn>
           </TableRow>

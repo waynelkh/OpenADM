@@ -50,9 +50,12 @@ export default (state = initalState, { type, payload }) => {
      */
     case 'ADDHOST': {
       const uid = `${payload.controller}@${payload.mac}`;
+      const host = (state.fixedNode[uid]) ?
+          { ...payload, uid, ...state.fixedNode[uid], fixed: true } :
+          { ...payload, uid };
+
       Topo.addNodeToSet({
-        ...payload,
-        uid,
+        ...host,
       });
       const suid = `${payload.controller}@${payload.location.dpid}`;
       Topo.addLinkById(suid, uid, 's2h');
@@ -74,10 +77,15 @@ export default (state = initalState, { type, payload }) => {
      * {controller: "waynesdn", type: "switch", dpid: "00:00:00:00:00:00:00:03"}
      */
     case 'ADDDEVICE': {
-      Topo.addNodeToSet({
-        ...payload,
-        uid: `${payload.controller}@${payload.dpid}`,
-      });
+      const uid = `${payload.controller}@${payload.dpid}`;
+      const node = (state.fixedNode[uid]) ?
+        { ...payload, uid, ...state.fixedNode[uid], fixed: true } :
+        { ...payload, uid };
+
+      Topo.addNodeToSet(node);
+      setTimeout(() => {
+        Topo.verticalNode();
+      }, 500);
       return state;
     }
     /**
@@ -94,11 +102,13 @@ export default (state = initalState, { type, payload }) => {
      * { controller, link: [{dpid, port},{dpid, port}]}
      */
     case 'ADDLINK': {
+      setTimeout(() => {
       Topo.addLinkById(
         `${payload.controller}@${payload.link[0].dpid}`,
         `${payload.controller}@${payload.link[1].dpid}`,
         's2s'
       );
+      }, 500);
       return state;
     }
     /**
@@ -151,7 +161,8 @@ export default (state = initalState, { type, payload }) => {
         nodes: topoNodes
           .filter(d => d.controller === c.controller)
           .map(d => d.uid),
-      }));
+      })).filter(d => d.controller !== 'gateway');
+	console.log('TopoNodeSet: ', topoNodeSet);
       const topoData = {
         nodes: topoNodes,
         links: topolinks,

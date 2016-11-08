@@ -35,7 +35,7 @@ const EditDeviceField = enhance(
   ({ uuid, mac, onMacChange, onUpdateDevice, onCancel }) =>
     <TableRow key={uuid}>
       <TableRowColumn>
-        <TextField onChange={onMacChange} value={mac} id={uuid} />
+        <TextField hintText="mac" onChange={onMacChange} value={mac} id={uuid} />
       </TableRowColumn>
       <TableRowColumn>
         <FlatButton label="儲存" primary icon={<Edit />} onClick={onUpdateDevice} />

@@ -21,7 +21,7 @@ export default handleActions({
   ADD_DEVICE: (state, { payload }) => state.update(payload,
     slice => slice.merge({
       [uuid.v1()]: {
-        mac: 'input mac',
+        mac: '',
         modify: true,
       },
     })

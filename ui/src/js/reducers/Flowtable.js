@@ -7,12 +7,9 @@ const initialState = Immutable.from({
   selectedSwitch: [],
   selectedController: '',
   showSearch: false,
-  filters: [
-    { category: 'flowId', operator: '!=', value: '0' },
-    { category: 'counterByte', operator: '>', value: '0' },
-  ],
+  filters: [],
   showSetting: false,
-  showColumn: ['flowId', 'controller', 'dpid', 'actions', 'counterByte'],
+  showColumn: ['controller', 'dpid', 'actions'],
   showAction: false,
 });
 

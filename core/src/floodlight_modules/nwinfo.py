@@ -420,7 +420,7 @@ class NWInfo:
 
         # Update portstats datastore
         key = (raw['controller'], raw['dpid'])
-        sorted(raw['flows'], key=lambda k: k['counterByte'], reverse=True)
+        #sorted(raw['flows'], key=lambda k: k['counterByte'], reverse=True)
         self.flowtables[key] = {'controller': raw['controller'],
                                 'dpid': raw['dpid'],
                                 'flows': raw['flows']}

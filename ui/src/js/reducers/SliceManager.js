@@ -16,7 +16,7 @@ export default handleActions({
     }), {});
     return Immutable.from(slices);
   },
-  ADD_SLICE: state => state.merge({ [uuid.v1()]: { name: 'name', bandwidth: 'M', modify: true } }),
+  ADD_SLICE: state => state.merge({ [uuid.v1()]: { name: '', bandwidth: '', modify: true } }),
   MODIFY_SLICE: (state, { payload }) => state.update(payload,
     slice => ({ ...slice, modify: true })
   ),

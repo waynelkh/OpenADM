@@ -100,6 +100,11 @@ class Topo {
       // topoInstant.tooltipManager().showLinkTooltip(false);
     });
 
+    
+    topoInstant.on('addNode', (sender, event) => {
+	console.log('addNode');
+	topoInstant.fit();
+    });
     const app = new nx.ui.Application();
     app.on('resize', () => {
       topoInstant.adaptToContainer();
@@ -162,7 +167,8 @@ class Topo {
   }
 
   setData(data) {
-    clist = _.uniq(['physical'].concat(data.nodeSet.map(d => d.controller)));
+    clist = _.uniq(['physical']
+	.concat(data.nodeSet.map(d => d.controller))).filter(n => n !== 'gateway');
     topoInstant.data(data);
     topoInstant.expandAll();
   }
@@ -287,18 +293,21 @@ class Topo {
   }
 
   verticalNode() {
+console.log('Clist: ', clist);
     topoInstant.getNodes().forEach(node => {
       if(node.model().getData().controller !== 'physical'){
         const dpid = node.model().getData().dpid;
         const physicalNode = topoInstant.getNode(`physical@${dpid}`);
         if (physicalNode) {
-          const LEVEL = (clist.indexOf(node.model().getData().controller)) * 300 * topoInstant.stageScale();
+          const LEVEL = (clist.indexOf(node.model().getData().controller)) * 300;
+console.log('Level = ', LEVEL);
           node.y(physicalNode.y() - LEVEL);
           node.x(physicalNode.x());
         }
         else if(node.model().getData().mac){
           const mac = node.model().getData().mac;
-          const LEVEL = (clist.indexOf(node.model().getData().controller)) * 300 * topoInstant.stageScale();
+          const LEVEL = (clist.indexOf(node.model().getData().controller)) * 300;
+console.log('Level = ', LEVEL);
           const physicalHost = topoInstant.getNode(`physical@${mac}`);
           if(physicalHost) {
             node.y(physicalHost.y() - LEVEL);
