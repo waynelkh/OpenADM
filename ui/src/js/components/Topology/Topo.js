@@ -157,6 +157,9 @@ class Topo {
         case 'v':
           this.verticalNode();
           break;
+        case 'b':
+          topoInstant.collapseAll();
+          break;
         case '?':
           props.toggleModule(keyMap[e.key]);
           break;
