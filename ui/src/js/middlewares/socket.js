@@ -2,12 +2,14 @@ import io from 'socket.io-client';
 import { toastr } from 'react-redux-toastr';
 
 let socket;
+
 // Send event to Server.
 const SendActions = [
   'SETTING_CONTROLLER',
   'SUBSCRIBE',
   'OTHER',
   'FEATURE',
+  'LINKUPDATE',
   'DEBUG',
   'RESET_DATASTORE',
 ];
@@ -30,6 +32,8 @@ const ReceiveActions = [
   'DEBUG_RESP',
   'SETTING_CONTROLLER_RESP',
   'ALL_DATA',
+  'LINKINFOUPDATE',
+  'LINKUPDATE_RESP',
   'SIMULATE_RESP',
   'ADDTAGS_RESP',
   'DELTAGS_RESP',
@@ -65,6 +69,7 @@ const createSocket = (store, coreURL) => {
     // after connected turn reconnection on
     socket.io._reconnection = true;  // eslint-disable-line no-underscore-dangle
     toastr.success('websocket', 'Connected');
+    window.socket = socket;
   });
   socket.on('connect_error', d => {
     toastr.error('websocket', `Connect error,

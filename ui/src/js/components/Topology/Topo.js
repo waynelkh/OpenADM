@@ -37,7 +37,7 @@ class Topo {
         color: vertex => getColorWithController(vertex.get('controller')),
       },
       linkConfig: {
-        width: vertex => ((vertex.get('linkType') === 's2s') ? 4 : 2),
+        width: vertex => ((vertex.get('width')) ? vertex.get('width').value * 2 : 2),
         linkType: 'curve',
         style: vertex => {
           return (vertex.get('linkType') !== 's2s') ? { 'stroke-dasharray': '1 , 1' } : {};
@@ -255,6 +255,23 @@ class Topo {
     });
   }
 
+  linkInfoUpdate(linkInfo) {
+    console.log('linkInfoUpdate: ', linkInfo);
+    const linkIds = this.getLinksByNodeUid(
+      `${linkInfo.controller}@${linkInfo.link[0].dpid || link[0].mac}`,
+      `${linkInfo.controller}@${linkInfo.link[1].dpid || link[1].mac}`
+    );
+    const linkClass = topoInstant.getLink(linkIds[0]);
+    const content = {
+      rate: JSON.stringify(linkInfo.label),
+      traffic: linkInfo.width.value,
+    }
+    linkClass.model().sets(content);
+    linkClass.width(linkInfo.width.value * 2);
+
+    console.log('linkIds and value:', linkIds, linkInfo.width.value);
+  }
+
   addPath(linkCollection = {}) {
     console.log('Add path: ', linkCollection);
     if (linkCollection.path && !linkCollection.path.length) {
@@ -296,21 +313,18 @@ class Topo {
   }
 
   verticalNode() {
-console.log('Clist: ', clist);
     topoInstant.getNodes().forEach(node => {
       if(node.model().getData().controller !== 'physical'){
         const dpid = node.model().getData().dpid;
         const physicalNode = topoInstant.getNode(`physical@${dpid}`);
         if (physicalNode) {
           const LEVEL = (clist.indexOf(node.model().getData().controller)) * 300;
-console.log('Level = ', LEVEL);
           node.y(physicalNode.y() - LEVEL);
           node.x(physicalNode.x());
         }
         else if(node.model().getData().mac){
           const mac = node.model().getData().mac;
           const LEVEL = (clist.indexOf(node.model().getData().controller)) * 300;
-console.log('Level = ', LEVEL);
           const physicalHost = topoInstant.getNode(`physical@${mac}`);
           if(physicalHost) {
             node.y(physicalHost.y() - LEVEL);

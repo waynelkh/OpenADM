@@ -193,6 +193,10 @@ export default (state = initalState, { type, payload }) => {
       Topo.addPath(payload);
       return state;
     }
+    case 'LINKINFOUPDATE': {
+      Topo.linkInfoUpdate(payload);
+      return state;
+    }
     default:
       return state;
   }
