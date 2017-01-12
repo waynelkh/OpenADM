@@ -12,6 +12,64 @@ const getColorWithController = cname => color10(clist.indexOf(cname));
 
 let topoInstant;
 
+nx.define('ExtendedLink', nx.graphic.Topology.Link, {
+  properties: {
+    sourcelabel: null,
+    targetlabel: null,
+  },
+  view: function(view) {
+    view.content.push({
+      name: 'source',
+      type: 'nx.graphic.Text',
+      props: {
+        'class': 'sourcelabel',
+        'alignment-baseline': 'text-after-edge',
+        'text-anchor': 'start',
+      }
+    }, {
+      name: 'target',
+      type: 'nx.graphic.Text',
+      props: {
+        'class': 'targetlabel',
+        'alignment-baseline': 'text-after-edge',
+        'text-anchor': 'end',
+      },
+    });
+    return view;
+  },
+  methods: {
+    update: function() {
+      this.inherited();
+      let el;
+      let point;
+      let line = this.line();
+      const angle = line.angle();
+      const stageScale = this.stageScale();
+      // pad line
+      line = line.pad(18 * stageScale, 18 * stageScale);
+      if (this.sourcelabel()) {
+        el = this.view('source');
+        point = line.start;
+        el.set('x', point.x);
+        el.set('y', point.y);
+        el.set('text', this.sourcelabel());
+        el.set('transform', 'rotate(' + angle + ' ' + point.x + ',' + point.y + ')');
+        el.setStyle('font-size', 12 * stageScale);
+      }
+      if (this.targetlabel()) {
+        el = this.view('target');
+        point = line.end;
+        el.set('x', point.x);
+        el.set('y', point.y);
+        el.set('text', this.targetlabel());
+        el.set('transform', 'rotate(' + angle + ' ' + point.x + ',' + point.y + ')');
+        el.setStyle('font-size', 12 * stageScale);
+      }
+    },
+  },
+});
+
+
 class Topo {
   initalTopo(renderDom) {
     topoInstant = new nx.graphic.Topology({
@@ -30,10 +88,10 @@ class Topo {
       dataProcessor: 'nextforce',
       // layoutType: 'hierarchicalLayout',
       // nodeInstanceClass: 'ExtendedNode',
-      // linkInstanceClass: 'ExtendedLink',
+      linkInstanceClass: 'ExtendedLink',
       nodeConfig: {
         iconType: vertex => vertex.get('nodeType'),
-        label: vertex => Helper.nodeSwitcher(vertex).uid,
+        label: vertex => Helper.nodeSwitcher(vertex).label,
         color: vertex => getColorWithController(vertex.get('controller')),
       },
       linkConfig: {
@@ -43,6 +101,9 @@ class Topo {
           return (vertex.get('linkType') !== 's2s') ? { 'stroke-dasharray': '1 , 1' } : {};
         },
         color: vertex => getColorWithController(vertex._sourceID.split('@')[0]),
+        sourcelabel: 'model.label.srt.value',
+        targetlabel: 'model.label.dst.value',
+
       },
       nodeSetConfig: {
         iconType: 'cloud',
@@ -100,10 +161,9 @@ class Topo {
       // topoInstant.tooltipManager().showLinkTooltip(false);
     });
 
-    
     topoInstant.on('addNode', (sender, event) => {
-	console.log('addNode');
-	topoInstant.fit();
+      console.log('addNode');
+      topoInstant.fit();
     });
     const app = new nx.ui.Application();
     app.on('resize', () => {
