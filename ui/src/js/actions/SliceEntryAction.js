@@ -40,7 +40,7 @@ export const updateDevice = payload => (dispatch, getState) => {
     },
   };
   hocFetch(
-    `${getState().setting.controllerURL}/restconf/operations/datastore:add-host-entry`,
+    `${getState().setting.controllerURL}/restconf/operations/infomanager:add-host-entry`,
     'POST',
     send
   ).then((data) => {
@@ -54,7 +54,7 @@ export const updateDevice = payload => (dispatch, getState) => {
 
 export const delDevice = payload => (dispatch, getState) =>
   hocFetch(
-    `${getState().setting.controllerURL}/restconf/operations/datastore:delete-host-entry-by-mac`,
+    `${getState().setting.controllerURL}/restconf/operations/infomanager:delete-host-entry-by-mac`,
     'POST',
     {
       input: {
@@ -71,7 +71,7 @@ export const delDevice = payload => (dispatch, getState) =>
 
 export const getAllSliceEntry = payload => (dispatch, getState) => {
   Promise.all([
-    fetch(`${getState().setting.controllerURL}/restconf/config/datastore:slice-table`, {
+    fetch(`${getState().setting.controllerURL}/restconf/config/infomanager:slice-table`, {
       method: 'GET',
       mode: 'cors',
       headers: {
@@ -85,7 +85,7 @@ export const getAllSliceEntry = payload => (dispatch, getState) => {
       }
       return response;
     }).then(res => res.json()),
-    fetch(`${getState().setting.controllerURL}/restconf/config/datastore:host-table`, {
+    fetch(`${getState().setting.controllerURL}/restconf/config/infomanager:host-table`, {
       method: 'GET',
       mode: 'cors',
       headers: {

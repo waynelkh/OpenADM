@@ -39,7 +39,7 @@ export const updateSlice = payload => (dispatch, getState) => {
     },
   };
   hocFetch(
-    `${getState().setting.controllerURL}/restconf/operations/datastore:add-slice-entry`,
+    `${getState().setting.controllerURL}/restconf/operations/infomanager:add-slice-entry`,
     'POST',
     send
   ).then((data) => {
@@ -51,7 +51,7 @@ export const updateSlice = payload => (dispatch, getState) => {
 
 export const delSlice = payload => (dispatch, getState) =>
   hocFetch(
-    `${getState().setting.controllerURL}/restconf/operations/datastore:delete-slice-entry-by-name`,
+    `${getState().setting.controllerURL}/restconf/operations/infomanager:delete-slice-entry-by-name`,
     'POST',
     {
       input: {
@@ -65,7 +65,7 @@ export const delSlice = payload => (dispatch, getState) =>
   }).catch(err => toastr.error(`Delete Slice ${err}`));
 
 export const getSlice = () => (dispatch, getState) =>
-  fetch(`${getState().setting.controllerURL}/restconf/config/datastore:slice-table`, {
+  fetch(`${getState().setting.controllerURL}/restconf/config/infomanager:slice-table`, {
     method: 'GET',
     mode: 'cors',
     headers: {
