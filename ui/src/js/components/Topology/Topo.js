@@ -11,64 +11,80 @@ let clist = [];
 const getColorWithController = cname => color10(clist.indexOf(cname));
 
 let topoInstant;
-
-nx.define('ExtendedLink', nx.graphic.Topology.Link, {
+var Line = nx.geometry.Line;
+var Vector = nx.geometry.Vector;
+nx.define('MyExtendLink', nx.graphic.Topology.Link, {
   properties: {
     sourcelabel: null,
-    targetlabel: null,
+    targetlabel: null
   },
   view: function(view) {
-    view.content.push({
-      name: 'source',
-      type: 'nx.graphic.Text',
-      props: {
-        'class': 'sourcelabel',
-        'alignment-baseline': 'text-after-edge',
-        'text-anchor': 'start',
-      }
-    }, {
-      name: 'target',
-      type: 'nx.graphic.Text',
-      props: {
-        'class': 'targetlabel',
-        'alignment-baseline': 'text-after-edge',
-        'text-anchor': 'end',
-      },
-    });
-    return view;
+      view.content.push({
+          name: 'source',
+          type: 'nx.graphic.Text',
+          props: {
+              'class': 'sourcelabel',
+              'alignment-baseline': 'text-after-edge',
+              'text-anchor': 'start'
+          }
+      }, {
+          name: 'target',
+          type: 'nx.graphic.Text',
+          props: {
+              'class': 'targetlabel',
+              'alignment-baseline': 'text-after-edge',
+              'text-anchor': 'end'
+          }
+      });
+
+      return view;
   },
   methods: {
-    update: function() {
-      this.inherited();
-      let el;
-      let point;
-      let line = this.line();
-      const angle = line.angle();
-      const stageScale = this.stageScale();
+    update: function () {
+      var _offset = this.getOffset();
+      var offset = new Vector(0, _offset);
+      var stageScale = this.stageScale();
+      var width = (this._width || 1) * (this._stageScale || 1);
+      var line = this.reverse() ? this.line().negate() : this.line();
+
+      var lineEl = this.view('line');
+      var pathEL = this.view('path');
+      var newLine = line.translate(offset).pad(22 * stageScale, 32 * stageScale);
+      lineEl.sets({
+          x1: newLine.start.x,
+          y1: newLine.start.y,
+          x2: newLine.end.x,
+          y2: newLine.end.y
+      });
+      pathEL.setStyle('display', 'none');
+      lineEl.setStyle('display', 'block');
+      lineEl.setStyle('stroke-width', width);
+      lineEl.setStyle('marker-end', 'url(#markerArrow)');
+
+      var el, point;
+      var angle = line.angle();
       // pad line
       line = line.pad(18 * stageScale, 18 * stageScale);
-      if (this.sourcelabel()) {
+      if (this.model().getData().label) {
         el = this.view('source');
         point = line.start;
         el.set('x', point.x);
         el.set('y', point.y);
-        el.set('text', this.sourcelabel());
-        el.set('transform', 'rotate(' + angle + ' ' + point.x + ',' + point.y + ')');
+        el.set('text', this.model().getData().label.src.value );
+        el.set('transform', `rotate(${angle} ${point.x},${point.y})`);
         el.setStyle('font-size', 12 * stageScale);
-      }
-      if (this.targetlabel()) {
+
         el = this.view('target');
         point = line.end;
         el.set('x', point.x);
         el.set('y', point.y);
-        el.set('text', this.targetlabel());
-        el.set('transform', 'rotate(' + angle + ' ' + point.x + ',' + point.y + ')');
+        el.set('text', this.model().getData().label.dst.value );
+        el.set('transform', `rotate(${angle} ${point.x},${point.y})`);
         el.setStyle('font-size', 12 * stageScale);
       }
-    },
-  },
+    }
+  }
 });
-
 
 class Topo {
   initalTopo(renderDom) {
@@ -88,22 +104,19 @@ class Topo {
       dataProcessor: 'nextforce',
       // layoutType: 'hierarchicalLayout',
       // nodeInstanceClass: 'ExtendedNode',
-      linkInstanceClass: 'ExtendedLink',
+      linkInstanceClass: 'MyExtendLink',
       nodeConfig: {
         iconType: vertex => vertex.get('nodeType'),
         label: vertex => Helper.nodeSwitcher(vertex).label,
         color: vertex => getColorWithController(vertex.get('controller')),
       },
       linkConfig: {
-        width: vertex => ((vertex.get('width')) ? vertex.get('width').value * 2 : 2),
-        linkType: 'curve',
+        width: vertex => (vertex.getData().width) ? vertex.getData().width.value * 2 : 2,
+        linkType: 'parallel',
         style: vertex => {
           return (vertex.get('linkType') !== 's2s') ? { 'stroke-dasharray': '1 , 1' } : {};
         },
         color: vertex => getColorWithController(vertex._sourceID.split('@')[0]),
-        sourcelabel: 'model.label.srt.value',
-        targetlabel: 'model.label.dst.value',
-
       },
       nodeSetConfig: {
         iconType: 'cloud',
@@ -324,6 +337,7 @@ class Topo {
     const linkClass = topoInstant.getLink(linkIds[0]);
     const content = {
       rate: JSON.stringify(linkInfo.label),
+      label: linkInfo.label,
       traffic: linkInfo.width.value,
     }
     linkClass.model().sets(content);

@@ -5,3 +5,12 @@
     height: 93vh;
     background-color: #EEEEEE;
 }
+
+.sourcelabel {
+    font-size: 20px;
+    fill: #00a9ff;
+}
+.targetlabel {
+    font-size: 20px;
+    fill: #0011ff;
+}

@@ -142,12 +142,12 @@ export default (state = initalState, { type, payload }) => {
           { ...d, uid, ...state.fixedNode[uid], fixed: true } :
           { ...d, uid };
       }));
-
       const topolinks = links.map(l => ({
         source: `${l.controller}@${l.link[0].dpid}`,
         target: `${l.controller}@${l.link[1].dpid}`,
         linkType: 's2s',
         controller: l.controller,
+        ...l,
       })).concat(
         hosts.map(h => ({
           source: `${h.controller}@${h.location.dpid}`,
