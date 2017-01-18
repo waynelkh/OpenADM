@@ -23,3 +23,19 @@ export const tagChange = createAction('TAG_CHANGE');
 export const levelChange = createAction('LEVEL_CHANGE');
 
 export const packet = createAction('PACKET');
+
+/**
+ * update linkinfo from ui
+ * @param  controller
+ * link: [ {dpid: '', port:}, {dpid: '', port:}]
+ * @return {[type]}         [description]
+ */
+export const linkUpdate = payload => ({
+  type: 'OTHER',
+  payload: {
+    url: 'linkupdate',
+    request: {
+      ...payload,
+    },
+  },
+});

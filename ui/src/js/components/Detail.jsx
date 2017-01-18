@@ -25,7 +25,7 @@ const Detail = ({ nodes = [] }) => {
   return (
     <div>
       <div>
-        <Tagging />
+        <Tagging selectNodes={nodes} />
       </div>
       <div>
         {pruneNode.map((node, i) => <List key={`ul-${i}`}>

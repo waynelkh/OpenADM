@@ -7,6 +7,7 @@ import GroupAddIcon from 'material-ui/svg-icons/social/group-add';
 
 import TextField from 'material-ui/TextField';
 import { withHandlers, withState, compose } from 'recompose';
+import { connect } from 'react-redux';
 
 const enhance = compose(
   withState('dailogOpen', 'toggleDailog', false),
@@ -18,14 +19,23 @@ const enhance = compose(
     onTagTextChange: props => event => {
       props.setTagText(event.target.value);
     },
+    onNameTextChange: props => event => {
+      const uid = props.selectNodes[0].uid;
+      props.setDeviceName({
+        name: event.target.value,
+        uid,
+      });
+    },
   })
 );
 
 const Tagging = ({
+  customName,
   tagText,
   toggleDailog,
   dailogOpen,
   onTagTextChange,
+  onNameTextChange,
 }) => {
   const actions = [
     <FlatButton label="Cancel" primary={true} onTouchTap={toggleDailog} />,
@@ -53,6 +63,12 @@ const Tagging = ({
           onChange={onTagTextChange}
           defaultValue={tagText}
         />
+        <TextField
+          hintText="String"
+          floatingLabelText="Custom Name"
+          onChange={onNameTextChange}
+          defaultValue={customName}
+        />
       </Dialog>
     </div>
   );
@@ -60,4 +76,12 @@ const Tagging = ({
 
 Tagging.propTypes = {};
 
-export default enhance(Tagging);
+const mapStateToProps = state => ({
+  slices: state.sliceManager,
+});
+
+const mapDispatchToProps = dispatch => ({
+  setDeviceName: payload => dispatch({ type: 'SET_DEVICE_NAME', payload }),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(enhance(Tagging));

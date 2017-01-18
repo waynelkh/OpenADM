@@ -2,8 +2,8 @@ import Immutable from 'seamless-immutable';
 import Topo from '../components/Topology/Topo.js';
 
 const initalState = Immutable.from({
-  nodes: [],
-  links: [],
+  nodes: {},
+  links: {},
   fixedNode: {},
   level: 0,
   filter: [],
@@ -133,9 +133,12 @@ export default (state = initalState, { type, payload }) => {
 
       const topoNodes = devices.map(d => {
         const uid = `${d.controller}@${d.dpid}`;
-        return (state.fixedNode[uid]) ?
+        let customNode = (state.fixedNode[uid]) ?
           { ...d, uid, ...state.fixedNode[uid], fixed: true } :
           { ...d, uid };
+        return (state.nodes[uid]) ?
+          { customName: state.nodes[uid], ...customNode } :
+          customNode;
       }).concat(hosts.map(d => {
         const uid = `${d.controller}@${d.mac}`;
         return (state.fixedNode[uid]) ?
@@ -162,7 +165,6 @@ export default (state = initalState, { type, payload }) => {
           .filter(d => d.controller === c.controller)
           .map(d => d.uid),
       })).filter(d => d.controller !== 'gateway');
-	console.log('TopoNodeSet: ', topoNodeSet);
       const topoData = {
         nodes: topoNodes,
         links: topolinks,
@@ -196,6 +198,15 @@ export default (state = initalState, { type, payload }) => {
     case 'LINKINFOUPDATE': {
       Topo.linkInfoUpdate(payload);
       return state;
+    }
+    case 'SET_DEVICE_NAME': {
+      const { uid, name } = payload;
+      Topo.changeNodeLable(uid, name);
+      return state.update('nodes', node => {
+        return (name === '') ?
+        Immutable.without(node, uid) :
+        node.merge({ [uid]: name });
+      });
     }
     default:
       return state;

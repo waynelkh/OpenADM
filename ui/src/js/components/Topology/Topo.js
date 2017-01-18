@@ -174,10 +174,9 @@ class Topo {
       // topoInstant.tooltipManager().showLinkTooltip(false);
     });
 
-    topoInstant.on('addNode', (sender, event) => {
-      console.log('addNode');
-      topoInstant.fit();
-    });
+    // topoInstant.on('addNode', (sender, event) => {
+    //   topoInstant.fit();
+    // });
     const app = new nx.ui.Application();
     app.on('resize', () => {
       topoInstant.adaptToContainer();
@@ -192,6 +191,7 @@ class Topo {
       // props.clickNode(node.model().getData());
     });
     topoInstant.on('clickLink', (topo, link) => {
+      console.log('clickLink: ', link);
       props.clickLink(link.model().getData());
     });
     topoInstant.on('selectNode', (topo, nodes) => {
@@ -407,6 +407,10 @@ class Topo {
         }
       }
     })
+  }
+
+  changeNodeLable(id, label) {
+    topoInstant.getNode(id).label(label);
   }
 
   getTopo() {

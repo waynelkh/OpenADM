@@ -10,13 +10,13 @@ const TopoHelper = {
         return data.get ? {
           uid: data.get('dpid'),
           nodeType: data.get('nodeType'),
-          label: data.get('sname'),
+          label: data.get('customName') ? data.get('customName') : data.get('dpid'),
         } : { uid: data.dpid, nodeType: data.nodeType, idKey: 'dpid' };
       case 'host':
         return data.get ? {
           uid: data.get('mac'),
           nodeType: data.get('nodeType'),
-          label: data.get('ip'),
+          label: data.get('customName') ? data.get('customName') : data.get('ip'),
         } : { uid: data.mac, nodeType: data.nodeType, idKey: 'mac' };
       case 'wlc':
         return data.get ? {

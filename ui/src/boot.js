@@ -33,7 +33,7 @@ const initialState = Immutable.from({
     ],
     selectNodes: [],
     level: 0,
-    nodes: [],
+    nodes: {},
     fixedNode: {},
     links: [],
   },
